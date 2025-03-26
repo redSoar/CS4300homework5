@@ -202,7 +202,7 @@ void View::display(sgraph::IScenegraph *scenegraph) {
     }
     else {
         glm::vec3 dronePos = moveDrone->getTranslate();
-        modelview.top() = modelview.top() * glm::lookAt(glm::vec3(dronePos.x,dronePos.y + 10.0f,dronePos.z),glm::vec3(dronePos.x + 100.0f,dronePos.y + 10.0f,dronePos.z),glm::vec3(0.0f,1.0f,0.0f));
+        modelview.top() = modelview.top() * glm::lookAt(glm::vec3(dronePos.x,dronePos.y + 10.0f,dronePos.z),glm::vec3(dronePos.x - 100.0f,dronePos.y + 10.0f,dronePos.z),glm::vec3(0.0f,1.0f,0.0f));
         modelview.top() = modelview.top() * glm::inverse(
             glm::translate(glm::mat4(1.0), moveDrone->getTranslate()) * 
             rotation * 

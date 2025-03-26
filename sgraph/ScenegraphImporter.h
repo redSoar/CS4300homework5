@@ -11,6 +11,7 @@
 #include "TranslateTransform.h"
 #include "PolygonMesh.h"
 #include "Material.h"
+#include "Light.h"
 #include <istream>
 #include <map>
 #include <string>
@@ -50,6 +51,9 @@ namespace sgraph {
                     }
                     else if (command == "material") {
                         parseMaterial(inputWithOutComments);
+                    }
+                    else if (command == "light") {
+                        parseLight(inputWithOutComments);
                     }
                     else if (command == "scale") {
                         parseScale(inputWithOutComments);
@@ -172,6 +176,43 @@ namespace sgraph {
                     materials[name] = mat;
                 }
 
+                virtual void parseLight(istream& input) {
+                    util::Light light;
+                    float r,g,b;
+                    string name;
+                    input >> name;
+                    string command;
+                    input >> command;
+                    while (command!="end-light") {
+                        if (command == "ambient") {
+                            input >> r >> g >> b;
+                            light.setAmbient(r,g,b);
+                        }
+                        else if (command == "diffuse") {
+                            input >> r >> g >> b;
+                            light.setDiffuse(r,g,b);
+                        }
+                        else if (command == "specular") {
+                            input >> r >> g >> b;
+                            light.setSpecular(r,g,b);
+                        }
+                        else if (command == "position") {
+                            input >> r >> g >> b;
+                            light.setPosition(r,g,b);
+                        }
+                        else if (command == "spot-direction") {
+                            input >> r >> g >> b;
+                            light.setSpotDirection(r,g,b);
+                        }
+                        else if (command == "spot-angle") {
+                            input >> r;
+                            light.setSpotAngle(r);
+                        }
+                        input >> command;
+                    }
+                    lights[name] = light;
+                }
+
                 virtual void parseCopy(istream& input) {
                     string nodename,copyof;
 
@@ -254,6 +295,7 @@ namespace sgraph {
             private:
                 map<string,SGNode *> nodes;
                 map<string,util::Material> materials;
+                map<string,util::Light> lights;
                 map<string,util::PolygonMesh<VertexAttrib> > meshes;
                 map<string,string> meshPaths;
                 SGNode *root;

@@ -43,7 +43,7 @@ void Controller::initScenegraph() {
         model.setScenegraph(scenegraph);
     }
     else {
-        ifstream inFile("scenegraphmodels/castle-with-drone.txt");
+        ifstream inFile("scenegraphmodels/sample.txt");
         sgraph::ScenegraphImporter importer;
     
         IScenegraph *scenegraph = importer.parse(inFile);
