@@ -44,12 +44,18 @@ public:
 
 private: 
 
+    void initShaderVariables();
     GLFWwindow* window;
     util::ShaderProgram program;
     util::ShaderLocationsVault shaderLocations;
     map<string,util::ObjectInstance *> objects;
     glm::mat4 projection;
     stack<glm::mat4> modelview;
+    vector<util::Light> lights;
+    //the shader locations for all lights, for convenience
+    vector<LightLocation> lightLocations;
+    //either name of object, or world, or view
+    vector<string> lightCoordinateSystems;
     sgraph::SGNodeVisitor *renderer;
     sgraph::SGNodeVisitor *textRenderer;
     int count;

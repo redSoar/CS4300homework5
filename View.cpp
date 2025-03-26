@@ -70,8 +70,8 @@ void View::init(Callbacks *callbacks,map<string,util::PolygonMesh<VertexAttrib>>
     glfwSwapInterval(1);
 
     // create the shader program
-    program.createProgram(string("shaders/default.vert"),
-                          string("shaders/default.frag"));
+    program.createProgram(string("shaders/phong-multiple.vert"),
+                        string("shaders/phong-multiple.frag"));
     // assuming it got created, get all the shader variables that it uses
     // so we can initialize them at some point
     // enable the shader program
@@ -127,6 +127,21 @@ void View::init(Callbacks *callbacks,map<string,util::PolygonMesh<VertexAttrib>>
 
 }
 
+void View::initShaderVariables() {
+    //get input variables that need to be given to the shader program
+    for (int i = 0; i < lights.size(); i++)
+      {
+        LightLocation ll;
+        stringstream name;
+  
+        name << "light[" << i << "]";
+        ll.ambient = shaderLocations.getLocation(name.str() + "" +".ambient");
+        ll.diffuse = shaderLocations.getLocation(name.str() + ".diffuse");
+        ll.specular = shaderLocations.getLocation(name.str() + ".specular");
+        ll.position = shaderLocations.getLocation(name.str() + ".position");
+        lightLocations.push_back(ll);
+      }
+}
 
 void View::display(sgraph::IScenegraph *scenegraph) {
     program.enable();
