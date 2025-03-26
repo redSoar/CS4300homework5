@@ -41,10 +41,11 @@ public:
     void moveDroneFace(int direction);
     void resetDronePosition();
     void changeCam(int cam);
+    void shaderVariables();
+    void findLights(sgraph::IScenegraph *scenegraph);
 
 private: 
 
-    void initShaderVariables();
     GLFWwindow* window;
     util::ShaderProgram program;
     util::ShaderLocationsVault shaderLocations;

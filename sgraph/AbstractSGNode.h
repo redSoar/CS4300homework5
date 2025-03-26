@@ -31,7 +31,7 @@ namespace sgraph
     /** 
      * The lights of this node. Any type of node may have any number of lights.
      */
-    stack<util::Light> lights;
+    vector<util::Light> lights;
 
   public:
     AbstractSGNode(const string& name,sgraph::IScenegraph *graph) {
@@ -73,7 +73,7 @@ namespace sgraph
     /*
      * Gets the light
      */
-    stack<util::Light> getLights() {
+    vector<util::Light> getLights() {
       return lights;
     }
 

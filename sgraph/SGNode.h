@@ -66,7 +66,7 @@ namespace sgraph {
     /*
      * Gets all lights
      */
-    virtual stack<util::Light> getLights()=0;
+    virtual vector<util::Light> getLights()=0;
 
     /**
      * Get the name of this node

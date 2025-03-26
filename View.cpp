@@ -10,6 +10,7 @@ using namespace std;
 #include "sgraph/GLScenegraphRenderer.h"
 #include "sgraph/GLScenegraphTextRenderer.h"
 #include "VertexAttrib.h"
+#include "SGNode.h"
 
 
 View::View() {
@@ -127,7 +128,7 @@ void View::init(Callbacks *callbacks,map<string,util::PolygonMesh<VertexAttrib>>
 
 }
 
-void View::initShaderVariables() {
+void View::shaderVariables() {
     //get input variables that need to be given to the shader program
     for (int i = 0; i < lights.size(); i++)
       {
@@ -141,6 +142,21 @@ void View::initShaderVariables() {
         ll.position = shaderLocations.getLocation(name.str() + ".position");
         lightLocations.push_back(ll);
       }
+}
+
+void View::findLights(sgraph::IScenegraph *scenegraph) {
+    while (lights.size() > 0) {
+        lights.pop_back();
+    }
+
+    vector<SGNode *> nodes = (*scenegraph).getRealNodes();
+
+    for (SGNode *s : nodes) {
+        vector<util::Light> new_lights = (*s).getLights();
+        for (util::Light l : new_lights) {
+            lights.push_back(l);
+        }
+    }
 }
 
 void View::display(sgraph::IScenegraph *scenegraph) {
@@ -226,6 +242,10 @@ void View::display(sgraph::IScenegraph *scenegraph) {
     
     //send projection matrix to GPU    
     glUniformMatrix4fv(shaderLocations.getLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+    // accumulate all lights in the scene graph give them to the shader
+    findLights(scenegraph);
+    shaderVariables();
 
     //draw scene graph here
     scenegraph->getRoot()->accept(renderer);

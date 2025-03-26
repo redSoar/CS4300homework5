@@ -60,6 +60,7 @@ namespace sgraph
      * in an attempt to merge two scene graphs
      */
         virtual map<string,SGNode *> getNodes()=0;
+        virtual vector<SGNode *> getRealNodes()=0;
         virtual void dispose()=0;
 
       /**

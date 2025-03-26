@@ -84,6 +84,16 @@ namespace sgraph {
       return nodes;
     }
 
+    vector<SGNode *> getRealNodes() {
+      vector<SGNode *> realNodes;
+
+      for (const auto &n : nodes) {
+        realNodes.push_back(n.second);
+      }
+
+      return realNodes;
+    }
+
     void setMeshes(map<string,util::PolygonMesh<VertexAttrib> >& meshes) {
       this->meshes = meshes;
     }
