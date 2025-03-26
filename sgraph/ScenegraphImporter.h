@@ -73,6 +73,9 @@ namespace sgraph {
                     else if (command == "assign-material") {
                         parseAssignMaterial(inputWithOutComments);
                     }
+                    else if (command == "assign-light") {
+                        parseAssignLight(inputWithOutComments);
+                    }
                     else if (command == "add-child") {
                         parseAddChild(inputWithOutComments);
                     }
@@ -252,6 +255,16 @@ namespace sgraph {
                     LeafNode *leafNode = dynamic_cast<LeafNode *>(nodes[nodename]);
                     if ((leafNode!=NULL) && (materials.find(matname)!=materials.end())) {
                         leafNode->setMaterial(materials[matname]);
+                    }
+                }
+
+                virtual void parseAssignLight(istream& input) {
+                    string nodename,lightname;
+                    input >> nodename >> lightname;
+
+                    SGNode *sgNode = dynamic_cast<SGNode *>(nodes[nodename]);
+                    if ((sgNode!=NULL) && (lights.find(lightname)!=lights.end())) {
+                        sgNode->addLight(lights[lightname]);
                     }
                 }
 

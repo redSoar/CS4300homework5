@@ -28,6 +28,10 @@ namespace sgraph
      * A reference to the sgraph::IScenegraph object that this is part of
      */
     sgraph::IScenegraph *scenegraph;
+    /** 
+     * The lights of this node. Any type of node may have any number of lights.
+     */
+    stack<util::Light> lights;
 
   public:
     AbstractSGNode(const string& name,sgraph::IScenegraph *graph) {
@@ -56,6 +60,21 @@ namespace sgraph
 
     void setParent(SGNode *parent) {
       this->parent = parent;
+    }
+
+    /**
+     * Add a the light to this node. Naming conventions and expectations are shared among all nodes, mats, and lights
+     * \param lt the light to be added
+     */
+    void addLight(const util::Light& lt) {
+        lights.push(lt);
+    }
+
+    /*
+     * Gets the light
+     */
+    stack<util::Light> getLights() {
+      return lights;
     }
 
     /**

@@ -5,6 +5,7 @@
 #include <vector>
 #include <stack>
 #include <string>
+#include "Light.h"
 using namespace std;
 
 namespace sgraph {
@@ -56,6 +57,16 @@ namespace sgraph {
      */
     virtual void setName(const string& name)=0;
 
+    /**
+     * Add a light to this node. Naming conventions and expectations are shared among all nodes, mats, and lights
+     * \param lt the light to be added
+     */
+    virtual void addLight(const util::Light& lt)=0;
+
+    /*
+     * Gets all lights
+     */
+    virtual stack<util::Light> getLights()=0;
 
     /**
      * Get the name of this node
