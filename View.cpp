@@ -125,6 +125,7 @@ void View::init(Callbacks *callbacks,map<string,util::PolygonMesh<VertexAttrib>>
     correctUp = glm::cross(cameraVector, rightVector);
 
     cameraMode = GLOBAL;
+    // initLights();
 
 }
 
@@ -158,6 +159,15 @@ void View::findLights(sgraph::IScenegraph *scenegraph) {
         }
     }
 }
+
+// void View::initLights() {
+//     util::Light l;
+//     l.setAmbient(0.3f, 0.3f, 0.3f);
+//     l.setDiffuse(0.5f, 0.5f, 0.5f);
+//     l.setSpecular(0.5f, 0.5f, 0.5f);
+//     l.setPosition(0, 0, 100);
+//     lights.push_back(l);
+//   }
 
 void View::display(sgraph::IScenegraph *scenegraph) {
     program.enable();
@@ -213,24 +223,24 @@ void View::display(sgraph::IScenegraph *scenegraph) {
     //     resetDrone = false;
     // }
 
-    // modelview.push(glm::mat4(1.0));
+    modelview.push(glm::mat4(1.0));
 
-    // /*Different cameras based on cameraMode. Trackball is only usable in GLOBAL camera mode
-    // */
-    // if (cameraMode == GLOBAL) {
-    //     modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f,300.0f,300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
-    //     // rotate by the amount that the cursor travels in the x and y coordinates
-    //     stack<glm::mat4> temp_stack = rotateAmount;
-    //     while (!temp_stack.empty()) {
-    //         glm::mat4 temp_mat = temp_stack.top();
-    //         modelview.top() = modelview.top() * temp_mat;
-    //         temp_stack.pop();
-    //     }
-    // }
-    // else if (cameraMode == CHOPPER) {
-    //     modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f, 450.0f, 300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
-    //     modelview.top() = modelview.top() * glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.0f,1.0f,0.0f));
-    // }
+    /*Different cameras based on cameraMode. Trackball is only usable in GLOBAL camera mode
+    */
+    if (cameraMode == GLOBAL) {
+        modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f,300.0f,300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
+        // rotate by the amount that the cursor travels in the x and y coordinates
+        stack<glm::mat4> temp_stack = rotateAmount;
+        while (!temp_stack.empty()) {
+            glm::mat4 temp_mat = temp_stack.top();
+            modelview.top() = modelview.top() * temp_mat;
+            temp_stack.pop();
+        }
+    }
+    else if (cameraMode == CHOPPER) {
+        modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f, 450.0f, 300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
+        modelview.top() = modelview.top() * glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.0f,1.0f,0.0f));
+    }
     // else {
     //     glm::vec3 dronePos = moveDrone->getTranslate();
     //     modelview.top() = modelview.top() * glm::lookAt(glm::vec3(dronePos.x,dronePos.y + 10.0f,dronePos.z),glm::vec3(dronePos.x - 100.0f,dronePos.y + 10.0f,dronePos.z),glm::vec3(0.0f,1.0f,0.0f));
@@ -240,19 +250,42 @@ void View::display(sgraph::IScenegraph *scenegraph) {
     //         glm::inverse(glm::translate(glm::mat4(1.0), moveDrone->getTranslate())));
     // }
     
-    // //send projection matrix to GPU    
-    // glUniformMatrix4fv(shaderLocations.getLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    //send projection matrix to GPU    
+    glUniformMatrix4fv(shaderLocations.getLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-    // // accumulate all lights in the scene graph give them to the shader
-    // findLights(scenegraph);
-    // shaderVariables();
 
-    // //draw scene graph here
-    // scenegraph->getRoot()->accept(renderer);
+    // accumulate all lights in the scene graph give them to the shader
+    findLights(scenegraph);
+    shaderVariables();
+
+    for (int i = 0; i < lights.size(); i++) {
+        glm::vec4 pos = lights[i].getPosition();
+        pos = modelview.top() * pos; 
+        glUniform4fv(lightLocations[i].position, 1, glm::value_ptr(pos));
+    }
+
+    //pass light color properties to shader
+    glUniform1i(shaderLocations.getLocation("numLights"),lights.size());
+    
+    //pass light colors to the shader
+    for (int i = 0; i < lights.size(); i++) {
+        glUniform3fv(lightLocations[i].ambient, 1, glm::value_ptr(lights[i].getAmbient()));
+        glUniform3fv(lightLocations[i].diffuse, 1, glm::value_ptr(lights[i].getDiffuse()));
+        glUniform3fv(lightLocations[i].specular, 1,glm::value_ptr(lights[i].getSpecular()));
+    }
+
+
+    //draw scene graph here
+    scenegraph->getRoot()->accept(renderer);
     // print the text renderer only once
     if(count < 1) {
         scenegraph->getRoot()->accept(textRenderer);
         count++;
+        cout << lights.size() << endl;
+        cout << lights.at(0).getAmbient().x << ", " << lights.at(0).getAmbient().y << ", " << lights.at(0).getAmbient().z << endl;
+        cout << lights.at(0).getDiffuse().x << ", " << lights.at(0).getDiffuse().y << ", " << lights.at(0).getDiffuse().z << endl;
+        cout << lights.at(0).getSpecular().x << ", " << lights.at(0).getSpecular().y << ", " << lights.at(0).getSpecular().z << endl;
+        cout << lights.at(0).getPosition().x << ", " << lights.at(0).getPosition().y << ", " << lights.at(0).getPosition().z << endl;
     }
     
     modelview.pop();

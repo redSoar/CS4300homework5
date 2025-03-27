@@ -52,6 +52,7 @@ public:
     void changeCam(int cam);
     void shaderVariables();
     void findLights(sgraph::IScenegraph *scenegraph);
+    void initLights();
 
 private: 
 
