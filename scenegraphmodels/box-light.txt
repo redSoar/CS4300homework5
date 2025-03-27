@@ -15,7 +15,7 @@ light one-light
 ambient 0.3 0.3 0.3
 diffuse 0.5 0.5 0.5
 specular 0.5 0.5 0.5
-position 0 0 30
+position 30 0 30
 end-light
 
 #the root

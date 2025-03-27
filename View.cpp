@@ -94,6 +94,7 @@ void View::init(Callbacks *callbacks,map<string,util::PolygonMesh<VertexAttrib>>
     map<string, string> shaderVarsToVertexAttribs;
 
     shaderVarsToVertexAttribs["vPosition"] = "position";
+    shaderVarsToVertexAttribs["vNormal"] = "normal";
     
     
     for (typename map<string,util::PolygonMesh<VertexAttrib> >::iterator it=meshes.begin();
@@ -133,10 +134,16 @@ void View::shaderVariables() {
     //get input variables that need to be given to the shader program
     for (int i = 0; i < lights.size(); i++)
       {
+        cout << "light" << i << " initialized" << endl;
         LightLocation ll;
         stringstream name;
   
         name << "light[" << i << "]";
+        cout << shaderLocations.getLocation(name.str() + ".ambient") << endl;
+        cout << shaderLocations.getLocation(name.str() + ".diffuse") << endl;
+        cout << shaderLocations.getLocation(name.str() + ".specular") << endl;
+        cout << shaderLocations.getLocation(name.str() + ".position") << endl;
+        
         ll.ambient = shaderLocations.getLocation(name.str() + ".ambient");
         ll.diffuse = shaderLocations.getLocation(name.str() + ".diffuse");
         ll.specular = shaderLocations.getLocation(name.str() + ".specular");
@@ -255,8 +262,10 @@ void View::display(sgraph::IScenegraph *scenegraph) {
 
 
     // accumulate all lights in the scene graph give them to the shader
-    findLights(scenegraph);
-    shaderVariables();
+    if(count < 1) {
+        findLights(scenegraph);
+        shaderVariables();
+    }
 
     for (int i = 0; i < lights.size(); i++) {
         glm::vec4 pos = lights[i].getPosition();
@@ -282,10 +291,10 @@ void View::display(sgraph::IScenegraph *scenegraph) {
         scenegraph->getRoot()->accept(textRenderer);
         count++;
         cout << lights.size() << endl;
-        cout << lights.at(0).getAmbient().x << ", " << lights.at(0).getAmbient().y << ", " << lights.at(0).getAmbient().z << endl;
-        cout << lights.at(0).getDiffuse().x << ", " << lights.at(0).getDiffuse().y << ", " << lights.at(0).getDiffuse().z << endl;
-        cout << lights.at(0).getSpecular().x << ", " << lights.at(0).getSpecular().y << ", " << lights.at(0).getSpecular().z << endl;
-        cout << lights.at(0).getPosition().x << ", " << lights.at(0).getPosition().y << ", " << lights.at(0).getPosition().z << endl;
+        cout << lights[0].getAmbient().x << ", " << lights[0].getAmbient().y << ", " << lights[0].getAmbient().z << endl;
+        cout << lights[0].getDiffuse().x << ", " << lights[0].getDiffuse().y << ", " << lights[0].getDiffuse().z << endl;
+        cout << lights[0].getSpecular().x << ", " << lights[0].getSpecular().y << ", " << lights[0].getSpecular().z << endl;
+        cout << lights[0].getPosition().x << ", " << lights[0].getPosition().y << ", " << lights[0].getPosition().z << endl;
     }
     
     modelview.pop();

@@ -57,8 +57,13 @@ namespace sgraph {
          */
         void visitLeafNode(LeafNode *leafNode) {
             //send modelview matrix to GPU  
+            glm::mat4 normalmatrix = glm::inverse(glm::transpose((modelview.top())));
             glUniformMatrix4fv(shaderLocations.getLocation("modelview"), 1, GL_FALSE, glm::value_ptr(modelview.top()));
-            glUniform4fv(shaderLocations.getLocation("vColor"),1,glm::value_ptr(leafNode->getMaterial().getAmbient()));
+            glUniformMatrix4fv(shaderLocations.getLocation("normalmatrix"), 1, false,glm::value_ptr(normalmatrix));
+            glUniform4fv(shaderLocations.getLocation("material.ambient"),1,glm::value_ptr(leafNode->getMaterial().getAmbient()));
+            glUniform4fv(shaderLocations.getLocation("material.diffuse"),1,glm::value_ptr(leafNode->getMaterial().getDiffuse()));
+            glUniform4fv(shaderLocations.getLocation("material.specular"),1,glm::value_ptr(leafNode->getMaterial().getSpecular()));
+            glUniform1f(shaderLocations.getLocation("material.shininess"), leafNode->getMaterial().getShininess());
             objects[leafNode->getInstanceOf()]->draw();
         }
 
