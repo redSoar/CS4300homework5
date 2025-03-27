@@ -1,4 +1,13 @@
+#lights
+light one-light
+ambient 0.3 0.3 0.3
+diffuse 0.5 0.5 0.5
+specular 0.5 0.5 0.5
+position 300 300 0 
+end-light
+
 group root root
+add-light one-light root
 
 translate t-drone t-drone 0 150 -120
 add-child t-drone root
@@ -6,7 +15,6 @@ scale s-drone s-drone 0.5 0.5 0.5
 add-child s-drone t-drone
 import drone scenegraphmodels/drone.txt
 add-child drone s-drone
-
 
 import castle scenegraphmodels/castle.txt
 add-child castle root
