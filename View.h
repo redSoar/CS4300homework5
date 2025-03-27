@@ -22,6 +22,15 @@ using namespace std;
 
 class View
 {
+    class LightLocation {
+        public:
+            int ambient,diffuse,specular,position;
+            LightLocation()
+            {
+            ambient = diffuse = specular = position = -1;
+            }
+    
+        };
     typedef enum {GLOBAL, CHOPPER, FPS} TypeOfCamera;
 
 public:

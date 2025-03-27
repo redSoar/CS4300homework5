@@ -43,7 +43,7 @@ void Controller::initScenegraph() {
         model.setScenegraph(scenegraph);
     }
     else {
-        ifstream inFile("scenegraphmodels/sample.txt");
+        ifstream inFile("scenegraphmodels/box-light.txt");
         sgraph::ScenegraphImporter importer;
     
         IScenegraph *scenegraph = importer.parse(inFile);

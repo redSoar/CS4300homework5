@@ -10,7 +10,7 @@ using namespace std;
 #include "sgraph/GLScenegraphRenderer.h"
 #include "sgraph/GLScenegraphTextRenderer.h"
 #include "VertexAttrib.h"
-#include "SGNode.h"
+#include "sgraph/SGNode.h"
 
 
 View::View() {
@@ -37,7 +37,7 @@ void View::init(Callbacks *callbacks,map<string,util::PolygonMesh<VertexAttrib>>
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-     glfwSetWindowUserPointer(window, (void *)callbacks);
+    glfwSetWindowUserPointer(window, (void *)callbacks);
 
     //using C++ functions as callbacks to a C-style library
     glfwSetKeyCallback(window, 
@@ -136,7 +136,7 @@ void View::shaderVariables() {
         stringstream name;
   
         name << "light[" << i << "]";
-        ll.ambient = shaderLocations.getLocation(name.str() + "" +".ambient");
+        ll.ambient = shaderLocations.getLocation(name.str() + ".ambient");
         ll.diffuse = shaderLocations.getLocation(name.str() + ".diffuse");
         ll.specular = shaderLocations.getLocation(name.str() + ".specular");
         ll.position = shaderLocations.getLocation(name.str() + ".position");
@@ -149,9 +149,9 @@ void View::findLights(sgraph::IScenegraph *scenegraph) {
         lights.pop_back();
     }
 
-    vector<SGNode *> nodes = (*scenegraph).getRealNodes();
+    vector<sgraph::SGNode *> nodes = (*scenegraph).getRealNodes();
 
-    for (SGNode *s : nodes) {
+    for (sgraph::SGNode *s : nodes) {
         vector<util::Light> new_lights = (*s).getLights();
         for (util::Light l : new_lights) {
             lights.push_back(l);
@@ -169,86 +169,86 @@ void View::display(sgraph::IScenegraph *scenegraph) {
     float timeDiff = time - previousTime;
     previousTime = time;
 
-    // Roll the drone until it makes a complete loop (360 degree)
-    if (rolling) {
-        rollingTotal += timeDiff*2;
-        if (rollingTotal >= 6.28319f) {
-            rolling = false;
-            rollingTotal = 0;
-        }
-        sgraph::RotateTransform* droneRot = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("rx-drone"));
-        droneRot->changeRotation(timeDiff*2);
-    }
+    // // Roll the drone until it makes a complete loop (360 degree)
+    // if (rolling) {
+    //     rollingTotal += timeDiff*2;
+    //     if (rollingTotal >= 6.28319f) {
+    //         rolling = false;
+    //         rollingTotal = 0;
+    //     }
+    //     sgraph::RotateTransform* droneRot = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("rx-drone"));
+    //     droneRot->changeRotation(timeDiff*2);
+    // }
     
-    sgraph::RotateTransform* propellorRotationOne = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("r-propellor-1"));
-    sgraph::RotateTransform* propellorRotationTwo = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("r-propellor-2"));
-    sgraph::RotateTransform* rotateDrone = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("r-drone"));
-    sgraph::TranslateTransform* moveDrone = dynamic_cast<sgraph::TranslateTransform*>(scenegraph->getRoot()->getNode("t-drone"));
+    // sgraph::RotateTransform* propellorRotationOne = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("r-propellor-1"));
+    // sgraph::RotateTransform* propellorRotationTwo = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("r-propellor-2"));
+    // sgraph::RotateTransform* rotateDrone = dynamic_cast<sgraph::RotateTransform*>(scenegraph->getRoot()->getNode("r-drone"));
+    // sgraph::TranslateTransform* moveDrone = dynamic_cast<sgraph::TranslateTransform*>(scenegraph->getRoot()->getNode("t-drone"));
 
-    // Set default drone position
-    if(count < 1){
-        droneOriginalPos = moveDrone->getTranslate();
-    }
+    // // Set default drone position
+    // if(count < 1){
+    //     droneOriginalPos = moveDrone->getTranslate();
+    // }
 
-    //Propellor rotation
-    propellorRotationOne->changeRotation(timeDiff * speed);
-    propellorRotationTwo->changeRotation(timeDiff * speed);
+    // //Propellor rotation
+    // propellorRotationOne->changeRotation(timeDiff * speed);
+    // propellorRotationTwo->changeRotation(timeDiff * speed);
 
-    //Drone rotation
-    rotateDrone->setRotationAxis(glm::axis(totalQuaternion));
-    rotateDrone->setRotation(glm::angle(totalQuaternion));
+    // //Drone rotation
+    // rotateDrone->setRotationAxis(glm::axis(totalQuaternion));
+    // rotateDrone->setRotation(glm::angle(totalQuaternion));
 
-    //Drone movement to relative forward direction
-    glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), rotateDrone->getAngleInRadians(), rotateDrone->getRotationAxis());
-    glm::vec4 forwardVector(1.0f, 0.0f, 0.0f, 1.0f); // Default forward vector
-    glm::vec4 newForwardVector = rotation * forwardVector;
-    moveDrone->moveForwardBackward(glm::vec3(newForwardVector.x, newForwardVector.y, newForwardVector.z) * droneMovement);
-    droneMovement = 0.0f;
+    // //Drone movement to relative forward direction
+    // glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), rotateDrone->getAngleInRadians(), rotateDrone->getRotationAxis());
+    // glm::vec4 forwardVector(1.0f, 0.0f, 0.0f, 1.0f); // Default forward vector
+    // glm::vec4 newForwardVector = rotation * forwardVector;
+    // moveDrone->moveForwardBackward(glm::vec3(newForwardVector.x, newForwardVector.y, newForwardVector.z) * droneMovement);
+    // droneMovement = 0.0f;
 
-    //Drone position/rotation reset
-    if(resetDrone){
-        moveDrone->setTranslate(droneOriginalPos);
-        rotateDrone->resetAngle();
-        totalQuaternion = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-        resetDrone = false;
-    }
+    // //Drone position/rotation reset
+    // if(resetDrone){
+    //     moveDrone->setTranslate(droneOriginalPos);
+    //     rotateDrone->resetAngle();
+    //     totalQuaternion = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    //     resetDrone = false;
+    // }
 
-    modelview.push(glm::mat4(1.0));
+    // modelview.push(glm::mat4(1.0));
 
-    /*Different cameras based on cameraMode. Trackball is only usable in GLOBAL camera mode
-    */
-    if (cameraMode == GLOBAL) {
-        modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f,300.0f,300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
-        // rotate by the amount that the cursor travels in the x and y coordinates
-        stack<glm::mat4> temp_stack = rotateAmount;
-        while (!temp_stack.empty()) {
-            glm::mat4 temp_mat = temp_stack.top();
-            modelview.top() = modelview.top() * temp_mat;
-            temp_stack.pop();
-        }
-    }
-    else if (cameraMode == CHOPPER) {
-        modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f, 450.0f, 300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
-        modelview.top() = modelview.top() * glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.0f,1.0f,0.0f));
-    }
-    else {
-        glm::vec3 dronePos = moveDrone->getTranslate();
-        modelview.top() = modelview.top() * glm::lookAt(glm::vec3(dronePos.x,dronePos.y + 10.0f,dronePos.z),glm::vec3(dronePos.x - 100.0f,dronePos.y + 10.0f,dronePos.z),glm::vec3(0.0f,1.0f,0.0f));
-        modelview.top() = modelview.top() * glm::inverse(
-            glm::translate(glm::mat4(1.0), moveDrone->getTranslate()) * 
-            rotation * 
-            glm::inverse(glm::translate(glm::mat4(1.0), moveDrone->getTranslate())));
-    }
+    // /*Different cameras based on cameraMode. Trackball is only usable in GLOBAL camera mode
+    // */
+    // if (cameraMode == GLOBAL) {
+    //     modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f,300.0f,300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
+    //     // rotate by the amount that the cursor travels in the x and y coordinates
+    //     stack<glm::mat4> temp_stack = rotateAmount;
+    //     while (!temp_stack.empty()) {
+    //         glm::mat4 temp_mat = temp_stack.top();
+    //         modelview.top() = modelview.top() * temp_mat;
+    //         temp_stack.pop();
+    //     }
+    // }
+    // else if (cameraMode == CHOPPER) {
+    //     modelview.top() = modelview.top() * glm::lookAt(glm::vec3(0.0f, 450.0f, 300.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
+    //     modelview.top() = modelview.top() * glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.0f,1.0f,0.0f));
+    // }
+    // else {
+    //     glm::vec3 dronePos = moveDrone->getTranslate();
+    //     modelview.top() = modelview.top() * glm::lookAt(glm::vec3(dronePos.x,dronePos.y + 10.0f,dronePos.z),glm::vec3(dronePos.x - 100.0f,dronePos.y + 10.0f,dronePos.z),glm::vec3(0.0f,1.0f,0.0f));
+    //     modelview.top() = modelview.top() * glm::inverse(
+    //         glm::translate(glm::mat4(1.0), moveDrone->getTranslate()) * 
+    //         rotation * 
+    //         glm::inverse(glm::translate(glm::mat4(1.0), moveDrone->getTranslate())));
+    // }
     
-    //send projection matrix to GPU    
-    glUniformMatrix4fv(shaderLocations.getLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    // //send projection matrix to GPU    
+    // glUniformMatrix4fv(shaderLocations.getLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-    // accumulate all lights in the scene graph give them to the shader
-    findLights(scenegraph);
-    shaderVariables();
+    // // accumulate all lights in the scene graph give them to the shader
+    // findLights(scenegraph);
+    // shaderVariables();
 
-    //draw scene graph here
-    scenegraph->getRoot()->accept(renderer);
+    // //draw scene graph here
+    // scenegraph->getRoot()->accept(renderer);
     // print the text renderer only once
     if(count < 1) {
         scenegraph->getRoot()->accept(textRenderer);

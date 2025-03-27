@@ -104,10 +104,11 @@ import propellor-2 scenegraphmodels/propellor.txt
 add-child propellor-2 s-propellor-2
 
 
-
+rotate rx-drone rx-drone 0 1 0 0
+add-child rx-drone full-drone
 
 rotate r-drone r-drone 0 1 0 0
-add-child r-drone full-drone
+add-child r-drone rx-drone
 add-child drone r-drone
 
 assign-root full-drone

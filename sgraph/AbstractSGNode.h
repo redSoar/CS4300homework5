@@ -67,7 +67,11 @@ namespace sgraph
      * \param lt the light to be added
      */
     void addLight(const util::Light& lt) {
-        lights.push(lt);
+        lights.push_back(lt);
+    }
+
+    bool hasLight() {
+      return !lights.empty();
     }
 
     /*

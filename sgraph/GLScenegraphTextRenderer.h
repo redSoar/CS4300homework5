@@ -32,11 +32,18 @@ namespace sgraph {
         }
 
         void visitGroupNode(GroupNode *groupNode) {
+            vector<util::Light> lights;
             if(depth > 0) {
                 cout << "- " << groupNode->getName() << endl;
             }
             else {
                 cout << groupNode->getName() << endl;
+            }
+            if(groupNode->hasLight()){
+                lights = groupNode->getLights();
+                for(int i = 0; i < lights.size(); i++) {
+                    cout << "lights " << i << endl;
+                }
             }
             depth+= indentation;
             for (int i=0;i<groupNode->getChildren().size();i=i+1) {
@@ -49,15 +56,29 @@ namespace sgraph {
         }
 
         void visitLeafNode(LeafNode *leafNode) {
+            vector<util::Light> lights;
             cout << "- " << leafNode->getName() << endl;
+            if(leafNode->hasLight()){
+                lights = leafNode->getLights();
+                for(int i = 0; i < lights.size(); i++) {
+                    cout << "lights " << i << endl;
+                }
+            }
         }
 
         void visitTransformNode(TransformNode * transformNode) {
+            vector<util::Light> lights;
             cout << "- " << transformNode->getName() << endl;
             depth+= indentation;
             if (transformNode->getChildren().size()>0) {
                 std::string stuff(depth, ' ');
                 cout << stuff;
+                if(transformNode->hasLight()){
+                    lights = transformNode->getLights();
+                    for(int i = 0; i < lights.size(); i++) {
+                        cout << "lights " << i << endl;
+                    }
+                }
                 transformNode->getChildren()[0]->accept(this);
             }
             depth-= indentation;

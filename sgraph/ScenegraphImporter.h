@@ -47,12 +47,12 @@ namespace sgraph {
                     }
                     else if (command == "leaf") {
                         parseLeaf(inputWithOutComments);
-
                     }
                     else if (command == "material") {
                         parseMaterial(inputWithOutComments);
                     }
                     else if (command == "light") {
+                        
                         parseLight(inputWithOutComments);
                     }
                     else if (command == "scale") {
@@ -260,11 +260,9 @@ namespace sgraph {
 
                 virtual void parseAssignLight(istream& input) {
                     string nodename,lightname;
-                    input >> nodename >> lightname;
-
-                    SGNode *sgNode = dynamic_cast<SGNode *>(nodes[nodename]);
-                    if ((sgNode!=NULL) && (lights.find(lightname)!=lights.end())) {
-                        sgNode->addLight(lights[lightname]);
+                    input >> lightname >> nodename;
+                    if (((nodes[nodename]!=NULL)) && (lights.find(lightname)!=lights.end())) {
+                        nodes[nodename]->addLight(lights[lightname]);
                     }
                 }
 
