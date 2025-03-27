@@ -12,6 +12,8 @@
 #include "PolygonMesh.h"
 #include "Material.h"
 #include "Light.h"
+#include "ImageLoader.h"
+#include "PPMImageLoader.h"
 #include <istream>
 #include <map>
 #include <string>
@@ -52,8 +54,22 @@ namespace sgraph {
                         parseMaterial(inputWithOutComments);
                     }
                     else if (command == "light") {
-                        
                         parseLight(inputWithOutComments);
+                    }
+                    else if (command == "image") {
+                        string name,path;
+                        inputWithOutComments >> name >> path;
+                        //cout << "Read " << name << " " << path << endl;
+                        texPaths[name] = path;
+                        ifstream in(path);
+
+                        ImageLoader *loader = new PPMImageLoader();
+                        loader->load(path);
+
+                        if (in.is_open()) {
+                            util::TextureImage *image = new util::TextureImage(loader->getPixels(), loader->getWidth(), loader->getHeight(), name);
+                            textures[name] = image;         
+                        } 
                     }
                     else if (command == "scale") {
                         parseScale(inputWithOutComments);
@@ -75,6 +91,9 @@ namespace sgraph {
                     }
                     else if (command == "assign-light") {
                         parseAssignLight(inputWithOutComments);
+                    }
+                    else if (command == "assign-texture") {
+                        parseAssignTexture(inputWithOutComments);
                     }
                     else if (command == "add-child") {
                         parseAddChild(inputWithOutComments);
@@ -266,6 +285,16 @@ namespace sgraph {
                     }
                 }
 
+                virtual void parseAssignTexture(istream& input) {
+                    string nodename, texname;
+                    input >> nodename >> texname;
+
+                    LeafNode *leafNode = dynamic_cast<LeafNode *>(nodes[nodename]);
+                    if ((leafNode!=NULL) && (textures.find(texname)!=textures.end())) {
+                        leafNode->setTexture(textures[texname]);
+                    }
+                }
+
                 virtual void parseAddChild(istream& input) {
                     string childname,parentname;
 
@@ -308,7 +337,9 @@ namespace sgraph {
                 map<string,util::Material> materials;
                 map<string,util::Light> lights;
                 map<string,util::PolygonMesh<VertexAttrib> > meshes;
+                map<string,util::TextureImage> textures;
                 map<string,string> meshPaths;
+                map<string,string> texPaths;
                 SGNode *root;
 
         

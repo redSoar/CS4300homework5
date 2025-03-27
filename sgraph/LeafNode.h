@@ -3,6 +3,8 @@
 
 #include "AbstractSGNode.h"
 #include "SGNodeVisitor.h"
+#include "ImageLoader.h"
+#include "PPMImageLoader.h"
 #include "Material.h"
 #include "glm/glm.hpp"
 #include <map>
@@ -30,17 +32,20 @@ protected:
      * The material associated with the object instance at this leaf
      */
     util::Material material;
+    util::TextureImage texture;
 
 public:
     LeafNode(const string& instanceOf,util::Material& material,const string& name,sgraph::IScenegraph *graph)
         :AbstractSGNode(name,graph) {
         this->objInstanceName = instanceOf;
         this->material = material;
+        this->texture = baseTexture();
     }
 
     LeafNode(const string& instanceOf,const string& name,sgraph::IScenegraph *graph)
         :AbstractSGNode(name,graph) {
         this->objInstanceName = instanceOf;
+        this->texture = baseTexture();
     }
 	
 	~LeafNode(){}
@@ -52,6 +57,17 @@ public:
 	 */
     void setMaterial(const util::Material& mat) {
         material = mat;
+    }
+
+    util::TextureImage baseTexture() {
+        ImageLoader *loader = new PPMImageLoader();
+        loader->load("textures/white.ppm");
+        util::TextureImage *image = new util::TextureImage(loader->getPixels(), loader->getWidth(), loader->getHeight(), name);
+        return *image;
+    }
+
+    void setTexture(const util::TextureImage& tex) {
+        texture = tex;
     }
 
     /*
