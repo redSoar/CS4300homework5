@@ -12,6 +12,7 @@
 #include "ObjectInstance.h"
 #include "PolygonMesh.h"
 #include "VertexAttrib.h"
+#include "TextureImage.h"
 #include "Callbacks.h"
 #include "sgraph/IScenegraph.h"
 #include <glm/gtc/quaternion.hpp>
@@ -53,6 +54,7 @@ public:
     void shaderVariables();
     void findLights(sgraph::IScenegraph *scenegraph);
     void initLights();
+    void setTextures(map<string,util::TextureImage> texts);
 
 private: 
 
@@ -63,10 +65,12 @@ private:
     glm::mat4 projection;
     stack<glm::mat4> modelview;
     vector<util::Light> lights;
+    map<string,util::TextureImage> textures;
     //the shader locations for all lights, for convenience
     vector<LightLocation> lightLocations;
     //either name of object, or world, or view
     vector<string> lightCoordinateSystems;
+    map<string,unsigned int> textureIds;
     sgraph::SGNodeVisitor *renderer;
     sgraph::SGNodeVisitor *textRenderer;
     int count;

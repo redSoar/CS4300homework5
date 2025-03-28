@@ -56,21 +56,21 @@ namespace sgraph {
                     else if (command == "light") {
                         parseLight(inputWithOutComments);
                     }
-                    else if (command == "image") {
-                        string name,path;
-                        inputWithOutComments >> name >> path;
-                        //cout << "Read " << name << " " << path << endl;
-                        texPaths[name] = path;
-                        ifstream in(path);
+                    // else if (command == "image") {
+                    //     string name,path;
+                    //     inputWithOutComments >> name >> path;
+                    //     //cout << "Read " << name << " " << path << endl;
+                    //     texPaths[name] = path;
+                    //     ifstream in(path);
 
-                        ImageLoader *loader = new PPMImageLoader();
-                        loader->load(path);
+                    //     ImageLoader *loader = new PPMImageLoader();
+                    //     loader->load(path);
 
-                        if (in.is_open()) {
-                            util::TextureImage *image = new util::TextureImage(loader->getPixels(), loader->getWidth(), loader->getHeight(), name);
-                            textures[name] = image;         
-                        } 
-                    }
+                    //     if (in.is_open()) {
+                    //         util::TextureImage *image = new util::TextureImage(loader->getPixels(), loader->getWidth(), loader->getHeight(), name);
+                    //         textures[name] = *image;         
+                    //     } 
+                    // }
                     else if (command == "scale") {
                         parseScale(inputWithOutComments);
                     }
@@ -92,9 +92,9 @@ namespace sgraph {
                     else if (command == "assign-light") {
                         parseAssignLight(inputWithOutComments);
                     }
-                    else if (command == "assign-texture") {
-                        parseAssignTexture(inputWithOutComments);
-                    }
+                    // else if (command == "assign-texture") {
+                    //     parseAssignTexture(inputWithOutComments);
+                    // }
                     else if (command == "add-child") {
                         parseAddChild(inputWithOutComments);
                     }
@@ -116,6 +116,11 @@ namespace sgraph {
                     throw runtime_error("Parsed scene graph, but nothing set as root");
                 }
             }
+
+            map<string,util::TextureImage> getTextures() {
+                return textures;
+            }
+
             protected:
                 virtual void parseGroup(istream& input) {
                     string varname,name;
@@ -285,15 +290,15 @@ namespace sgraph {
                     }
                 }
 
-                virtual void parseAssignTexture(istream& input) {
-                    string nodename, texname;
-                    input >> nodename >> texname;
+                // virtual void parseAssignTexture(istream& input) {
+                //     string nodename, texname;
+                //     input >> nodename >> texname;
 
-                    LeafNode *leafNode = dynamic_cast<LeafNode *>(nodes[nodename]);
-                    if ((leafNode!=NULL) && (textures.find(texname)!=textures.end())) {
-                        leafNode->setTexture(textures[texname]);
-                    }
-                }
+                //     LeafNode *leafNode = dynamic_cast<LeafNode *>(nodes[nodename]);
+                //     if ((leafNode!=NULL) && (textures.find(texname)!=textures.end())) {
+                //         leafNode->setTexture(textures[texname]);
+                //     }
+                // }
 
                 virtual void parseAddChild(istream& input) {
                     string childname,parentname;

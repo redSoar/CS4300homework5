@@ -40,10 +40,11 @@ void Controller::initScenegraph() {
         sgraph::ScenegraphImporter importer;
     
         IScenegraph *scenegraph = importer.parse(inFile);
+        //view.setTextures(importer.getTextures());
         model.setScenegraph(scenegraph);
     }
     else {
-        ifstream inFile("scenegraphmodels/box-light.txt");
+        ifstream inFile("scenegraphmodels/castle-with-drone.txt");
         sgraph::ScenegraphImporter importer;
     
         IScenegraph *scenegraph = importer.parse(inFile);

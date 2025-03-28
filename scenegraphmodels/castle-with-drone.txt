@@ -7,7 +7,7 @@ position 300 300 0
 end-light
 
 group root root
-add-light one-light root
+assign-light one-light root
 
 translate t-drone t-drone 0 150 -120
 add-child t-drone root

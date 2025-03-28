@@ -64,6 +64,10 @@ namespace sgraph {
             glUniform4fv(shaderLocations.getLocation("material.diffuse"),1,glm::value_ptr(leafNode->getMaterial().getDiffuse()));
             glUniform4fv(shaderLocations.getLocation("material.specular"),1,glm::value_ptr(leafNode->getMaterial().getSpecular()));
             glUniform1f(shaderLocations.getLocation("material.shininess"), leafNode->getMaterial().getShininess());
+
+            // glBindTexture(GL_TEXTURE_2D,leafNode->getTexture());
+            // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+	        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
             objects[leafNode->getInstanceOf()]->draw();
         }
 

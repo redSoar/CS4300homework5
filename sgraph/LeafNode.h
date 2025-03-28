@@ -32,20 +32,20 @@ protected:
      * The material associated with the object instance at this leaf
      */
     util::Material material;
-    util::TextureImage texture;
+    //util::TextureImage texture;
 
 public:
     LeafNode(const string& instanceOf,util::Material& material,const string& name,sgraph::IScenegraph *graph)
         :AbstractSGNode(name,graph) {
         this->objInstanceName = instanceOf;
         this->material = material;
-        this->texture = baseTexture();
+        //this->texture = baseTexture();
     }
 
     LeafNode(const string& instanceOf,const string& name,sgraph::IScenegraph *graph)
         :AbstractSGNode(name,graph) {
         this->objInstanceName = instanceOf;
-        this->texture = baseTexture();
+        //this->texture = baseTexture();
     }
 	
 	~LeafNode(){}
@@ -59,16 +59,20 @@ public:
         material = mat;
     }
 
-    util::TextureImage baseTexture() {
-        ImageLoader *loader = new PPMImageLoader();
-        loader->load("textures/white.ppm");
-        util::TextureImage *image = new util::TextureImage(loader->getPixels(), loader->getWidth(), loader->getHeight(), name);
-        return *image;
-    }
+    // util::TextureImage baseTexture() {
+    //     ImageLoader *loader = new PPMImageLoader();
+    //     loader->load("textures/white.ppm");
+    //     util::TextureImage *image = new util::TextureImage(loader->getPixels(), loader->getWidth(), loader->getHeight(), name);
+    //     return *image;
+    // }
 
-    void setTexture(const util::TextureImage& tex) {
-        texture = tex;
-    }
+    // void setTexture(util::TextureImage& tex) {
+    //     texture = tex;
+    // }
+
+    // util::TextureImage getTexture() {
+    //     return texture;
+    // }
 
     /*
      * gets the material
